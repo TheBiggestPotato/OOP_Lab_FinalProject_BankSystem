@@ -3,73 +3,27 @@
 #include <map>
 #include <set>
 #include <list>
+#include <conio.h>
 
 using namespace std;
 
-class Person{
-
-};
-
-class Client
+class Account
 {
 protected:
-    int clientID;
-    string clientName;
-public:
-    Client(int id,string name):clientID(id),clientName(name){}
-    virtual void display_client_info()=0;
-};
-
-class PersonalClient : public Client
-{
-private:
-    string personalPhoneNumber;
-public:
-    PersonalClient(int id,string name,string phone):Client(id,name),personalPhoneNumber(phone){}
-    void display_client_info()
-    {
-        cout<<"ID: "<<clientID<<endl;
-        cout<<"Name: "<<clientName<<endl;
-        cout<<"Phone Number: "<<personalPhoneNumber<<endl;
-    }
-};
-
-class BusinessClient : public Client
-{
-private:
-    string businessPhoneNumber;
-public:
-    BusinessClient(int id,string name,string phone):Client(id,name),businessPhoneNumber(phone){}
-    void display_client_info()
-    {
-        cout<<"ID: "<<clientID<<endl;
-        cout<<"Name: "<<clientName<<endl;
-        cout<<"Phone Number: "<<businessPhoneNumber<<endl;
-    }
-};
-
-
-template <typename T>
-class Account{
-private:
-    T accountNumber;
-    T accountHolderName;
-    T accountBalance;
+    int accountNumber;
+    string accountHolderName;
+    double accountBalance;
 
 public:
-    Account(T accountNumber, T accountHolderName, T accountBalance)
-    {
-        this->accountNumber = accountNumber;
-        this->accountHolderName = accountHolderName;
-        this->accountBalance = accountBalance;
-    }
+    Account(int accountNumber, string accountHolderName, double accountBalance) :
+            accountNumber(accountNumber), accountHolderName(accountHolderName), accountBalance(accountBalance) {}
 
-    void deposit(T amount)
+    virtual void deposit(double amount)
     {
         accountBalance += amount;
     }
 
-    void withdraw(T amount)
+    virtual void withdraw(double amount)
     {
         if (amount > accountBalance)
         {
@@ -79,22 +33,97 @@ public:
         accountBalance -= amount;
     }
 
-    T getAccountNumber()
+    friend istream& operator>>(istream& in, Account& a)
     {
-        return accountNumber;
-    }
+        cout << endl;
+        cout << "NAME: ";
+        in >> a.accountHolderName;
+        cout << "\n INITIAL DEPOSIT: "
+        in >> a.accountBalance;
+    };
 
-    T getAccountHolderName()
+    friend ostream& operator<< (ostream& out, Account& a)
     {
-        return accountHolderName;
+        out << endl;
+        out << " ACCOUNT #id: " << a.accountNumber << endl;
+        out << " NAME: " << a.accountHolderName << endl;
+        out << " BALANCE: " << a.accountBalance << "$\n";
+        return out;
     }
+};
 
-    T getAccountBalance()
+class SavingsAccount : public Account
+{
+private:
+    double interestRate;
+
+public:
+    SavingsAccount(int accountNumber, string accountHolderName, double accountBalance, double interestRate) :
+            Account(accountNumber, accountHolderName, accountBalance), interestRate(interestRate) {}
+
+    void deposit(double amount)
     {
-        return accountBalance;
+        accountBalance += amount + amount*interestRate;
+    }
+};
+
+class CheckingAccount : public Account
+{
+private:
+    double overdraftFee;
+
+public:
+    CheckingAccount(int accountNumber, string accountHolderName, double accountBalance, double overdraftFee) :
+            Account(accountNumber, accountHolderName, accountBalance), overdraftFee(overdraftFee) {}
+
+    void withdraw(double amount)
+    {
+        if (amount > accountBalance)
+        {
+            accountBalance -= overdraftFee;
+            cout << "Overdraft fee applied. New balance: " << accountBalance << endl;
+        }
+        else
+        {
+            accountBalance -= amount;
+        }
+    }
+};
+
+template <typename T>
+class Person
+{
+protected:
+    T firstName;
+    T lastName;
+    T age;
+public:
+    Person(T firstName, T lastName, T age)
+    {
+        this->firstName = firstName;
+        this->lastName = lastName;
+        this->age = age;
+    }
+    virtual void display()
+    {
+        cout << "Name: " << firstName << " " << lastName << endl;
+        cout << "Age: " << age << endl;
+    }
+};
+
+class Client : public Person<string>
+{
+private:
+    int clientID;
+public:
+    Client(int id,string firstName,string lastName,int age):Person(firstName,lastName,age),clientID(id){}
+    void display()
+    {
+        Person::display();
+        cout<<"ID: "<<clientID<<endl;
     }
 };
 
 int main(){
-    cout << "Hello World!";
+
 }
