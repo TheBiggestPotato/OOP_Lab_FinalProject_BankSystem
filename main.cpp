@@ -340,27 +340,6 @@ public:
 };
 int Client::nextClientID = 0;
 
-template <typename T>
-class Transaction
-{
-private:
-    string ibanFrom;
-    string ibanTo;
-    T amount;
-
-public:
-    Transaction(string ibanFrom, string ibanTo, T amount) :
-            ibanFrom(ibanFrom), ibanTo(ibanTo), amount(amount) {}
-
-    void display()
-    {
-        cout << "Sender:" << endl;
-        cout << "Receiver: " << accountNumber << endl;
-        cout << "Amount: " << amount << endl;
-    }
-};
-
-
 class Application
 {
 private:
