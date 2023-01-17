@@ -1,1 +1,1 @@
-# OOP_Lab_FinalProject
+University Lab for Object Oriented Programming in C++
